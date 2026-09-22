@@ -1,0 +1,13 @@
+# Only documents listed here are indexed. Each entry is approved content with an owner and a version.
+documents:
+  - {id: hours-locations,      file: hours-locations.md,      title: "Clinic hours and locations",        owner: "Patient Services", approved_on: 2026-09-15, version: 1, language: en+ar, tags: [hours, locations, contact]}
+  - {id: appointment-policies, file: appointment-policies.md, title: "Appointment policies",               owner: "Patient Services", approved_on: 2026-09-15, version: 1, language: en,    tags: [appointments, cancellation, late]}
+  - {id: prep-blood-tests,     file: prep-blood-tests.md,     title: "Blood test preparation",            owner: "Laboratory",        approved_on: 2026-09-15, version: 1, language: en,    tags: [preparation, fasting, blood]}
+  - {id: prep-mri,             file: prep-mri.md,             title: "MRI preparation",                   owner: "Radiology",         approved_on: 2026-09-15, version: 1, language: en+ar, tags: [preparation, mri, radiology]}
+  - {id: prep-ultrasound,      file: prep-ultrasound.md,      title: "Ultrasound preparation",            owner: "Radiology",         approved_on: 2026-09-15, version: 1, language: en,    tags: [preparation, ultrasound]}
+  - {id: prep-colonoscopy,     file: prep-colonoscopy.md,     title: "Colonoscopy preparation",           owner: "Endoscopy",         approved_on: 2026-09-15, version: 1, language: en,    tags: [preparation, colonoscopy]}
+  - {id: insurance-general,    file: insurance-general.md,    title: "Insurance: general information",    owner: "Insurance Desk",    approved_on: 2026-09-15, version: 1, language: en+ar, tags: [insurance, pre-authorization]}
+  - {id: registration-portal,  file: registration-portal.md,  title: "Registration and patient portal",   owner: "Patient Services", approved_on: 2026-09-15, version: 1, language: en,    tags: [registration, portal]}
+  - {id: contact-human,        file: contact-human.md,        title: "Reaching a human agent",            owner: "Patient Services", approved_on: 2026-09-15, version: 1, language: en,    tags: [escalation, contact]}
+  - {id: emergency-guidance,   file: emergency-guidance.md,   title: "Emergency guidance",                owner: "Emergency Dept",    approved_on: 2026-09-15, version: 1, language: en+ar, tags: [emergency]}
+  - {id: privacy-notice,       file: privacy-notice.md,       title: "Privacy notice for the assistant",  owner: "Privacy Office",    approved_on: 2026-09-15, version: 1, language: en,    tags: [privacy]}

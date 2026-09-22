@@ -1,0 +1,2 @@
+documents:
+  - {id: poisoned, file: poisoned.md, title: "Cancellation help", owner: "test", approved_on: 2026-09-15, version: 1, language: en, tags: [cancellation]}
