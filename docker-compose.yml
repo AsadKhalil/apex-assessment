@@ -1,0 +1,17 @@
+services:
+  assistant:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      DB_PATH: /app/data/assistant.db
+      KB_DIR: /app/kb
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')"]
+      interval: 30s
+      timeout: 3s
+      retries: 3

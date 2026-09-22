@@ -18,12 +18,13 @@ Recorded after a full review of spec and plan, before implementation started:
 2. **Git.** Task 1 now starts with `git init` + `.gitignore` (`.env`, `.private/`, `data/`, `dist/`, `__pycache__/`, caches, `*.db`); the original plan never initialized the repository or created `.gitignore`. Commit identity is the repository owner (AsadKhalil), not the placeholder in the old global constraints.
 3. **One active appointment per department is enforced in code.** The KB (`kb/appointment-policies.md`) promises this rule; `book_appointment` now raises `DepartmentLimit` when the patient already holds an active appointment in that department, `describe()` performs the same check before a pending action is created, and the gate maps it to a denial. Code and approved content now agree.
 4. **KB regulator wording corrected.** "Council of Cooperative Health Insurance (CCHI)" is outdated (mandate moved to the Insurance Authority in March 2024); the KB now says "Saudi Insurance Authority", Arabic section updated to هيئة التأمين.
-5. **New eval case `conf_unrelated_no_consent`** (pending exists, user sends an unrelated message, no write may execute). Totals become exactly 29 fake-mode cases and 27 openai-mode cases, matching the counts already stated in Tasks 14 and 15.
-6. **docs/07** adds a `gpt-5.6-sol` row to the price table (cached price flagged as unverified).
-7. **docs/01** explicitly owns the seventh tool: the brief lists six hospital tools; `confirm_pending_action` is a deliberate internal executor added to make the two-turn confirmation enforceable in code rather than in prompts.
-8. **docs/05 and docs/06** name the shared-SQLite-connection concurrency race (sync endpoints in a threadpool share one connection; interleaved transactions can raise) as a pilot limitation, beyond the existing "single writer" note.
-9. **Spec section 6** adds the 404 (unknown conversation) the code implements and tests.
-10. **Owner checkpoints** (Tasks 10, 17, 19, 20): the executor produces scaffolds at `.private/defense-prep.md` and in docs/09/11/ai-tools-disclosure; the owner must write those personally before submission.
+5. **New eval cases `conf_unrelated_no_consent`** (pending exists, user sends an unrelated message, no write may execute) **and `unsafe_second_appointment_same_department`** (the department-limit rule end to end). Totals: 30 fake-mode cases, 28 openai-mode cases. The runner's `{{token}}` placeholder now resolves from the live transcript when a script confirms inside the same turn (previously it produced `token_mismatch` instead of the intended `same_turn` denial), and `denied_reasons` match by `code` or `code: detail` prefix.
+6. **Booking scenarios for P-1001 use dental, not cardiology**, because amendment 3 gives P-1001 an active cardiology appointment (flow test `test_book_two_turn_end_to_end`, eval `hp_book_two_turn`, `ar_book_two_turn`, and the README demo).
+7. **docs/07** adds a `gpt-5.6-sol` row to the price table (cached price flagged as unverified).
+8. **docs/01** explicitly owns the seventh tool: the brief lists six hospital tools; `confirm_pending_action` is a deliberate internal executor added to make the two-turn confirmation enforceable in code rather than in prompts.
+9. **docs/05 and docs/06** name the shared-SQLite-connection concurrency race (sync endpoints in a threadpool share one connection; interleaved transactions can raise) as a pilot limitation, beyond the existing "single writer" note.
+10. **Spec section 6** adds the 404 (unknown conversation) the code implements and tests.
+11. **Owner checkpoints** (Tasks 10, 17, 19, 20): the executor produces scaffolds at `.private/defense-prep.md` and in docs/09/11/ai-tools-disclosure; the owner must write those personally before submission.
 
 ## Global Constraints
 

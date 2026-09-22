@@ -19,6 +19,14 @@ def test_env_is_read(monkeypatch):
     assert s.faults_enabled is False
 
 
+def test_inline_comments_in_env_values_are_stripped(monkeypatch):
+    monkeypatch.setenv("LLM_PROVIDER", "openai                # openai | scripted")
+    monkeypatch.setenv("APP_FAKE_NOW", "2026-10-05T09:00:00+03:00  # deterministic demo clock")
+    s = Settings.from_env()
+    assert s.llm_provider == "openai"
+    assert s.fake_now == "2026-10-05T09:00:00+03:00"
+
+
 def test_fixed_clock():
     s = Settings.from_env(fake_now="2026-10-05T09:00:00+03:00")
     t = now(s)

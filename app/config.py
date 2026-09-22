@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass, fields
 from datetime import datetime, timedelta, timezone
 
@@ -45,8 +46,11 @@ class Settings:
         for f in fields(cls):
             env_name = _ENV_MAP.get(f.name)
             raw = os.environ.get(env_name) if env_name else None
-            if raw is not None and raw != "":
-                values[f.name] = raw
+            if raw is not None:
+                # .env files copied from .env.example may carry inline comments; drop them.
+                raw = re.sub(r"\s+#.*$", "", raw).strip()
+                if raw != "":
+                    values[f.name] = raw
         values.update(overrides)
         return cls(**values)
 
