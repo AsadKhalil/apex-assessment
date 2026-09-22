@@ -80,3 +80,65 @@ def final(message: str, intents=("information",), claimed=(), language="en",
         message=message, intents=[Intent(i) for i in intents],
         claimed_actions=[ClaimedAction(tool=t, appointment_id=a) for t, a in claimed],
         escalation_recommended=escalation_recommended, pending_declined=pending_declined, language=language))
+
+
+from pydantic import ValidationError  # noqa: E402
+
+from app.config import Settings  # noqa: E402
+
+
+class OpenAIResponsesClient:
+    """Thin, stateless adapter over the Responses API. The agent replays output items between calls."""
+
+    def __init__(self, settings: Settings, client=None):
+        self.settings = settings
+        if client is None:
+            from openai import OpenAI
+
+            client = OpenAI(api_key=settings.openai_api_key, timeout=30.0, max_retries=0)
+        self.client = client
+
+    def respond(self, instructions, input_items, tools, text_format) -> LLMResult:
+        import openai
+
+        kwargs: dict[str, Any] = dict(
+            model=self.settings.openai_model, instructions=instructions, input=input_items, tools=tools,
+            text_format=text_format, store=False, include=["reasoning.encrypted_content"])
+        if self.settings.openai_reasoning_effort:
+            kwargs["reasoning"] = {"effort": self.settings.openai_reasoning_effort}
+        try:
+            resp = self.client.responses.parse(**kwargs)
+        except (openai.APIConnectionError, openai.APITimeoutError, openai.RateLimitError) as e:
+            raise LLMUnavailable(str(e)) from e
+        except openai.APIStatusError as e:
+            if e.status_code >= 500:
+                raise LLMUnavailable(str(e)) from e
+            raise
+        except (ValidationError, ValueError) as e:  # final text did not match AssistantOutput
+            raise LLMOutputInvalid(str(e)) from e
+        return to_result(resp)
+
+
+def to_result(resp) -> LLMResult:
+    tool_calls: list[LLMToolCall] = []
+    for item in resp.output:
+        if getattr(item, "type", None) == "function_call":
+            try:
+                arguments = json.loads(item.arguments or "{}")
+            except json.JSONDecodeError:
+                arguments = {"_raw": item.arguments}
+            tool_calls.append(LLMToolCall(item.call_id, item.name, arguments))
+    final = None
+    if not tool_calls:
+        final = getattr(resp, "output_parsed", None)
+        if final is None:
+            raise LLMOutputInvalid("no parsed final output (refusal or schema mismatch)")
+    usage = getattr(resp, "usage", None)
+    return LLMResult(
+        tool_calls=tool_calls,
+        final=final,
+        output_items=[item.model_dump(mode="json", exclude_none=True) if hasattr(item, "model_dump")
+                      else (vars(item) if not isinstance(item, dict) else item) for item in resp.output],
+        input_tokens=int(getattr(usage, "input_tokens", 0) or 0),
+        output_tokens=int(getattr(usage, "output_tokens", 0) or 0),
+    )
