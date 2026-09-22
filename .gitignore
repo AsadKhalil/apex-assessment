@@ -1,0 +1,15 @@
+# secrets and private notes
+.env
+.private/
+
+# local state and build output
+data/
+dist/
+*.db
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
