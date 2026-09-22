@@ -44,7 +44,7 @@ def test_denied_reason_prefix_matches():
 
 
 def test_report_is_written(tmp_path):
-    case = [c for c in load_cases() if c["id"] == "hp_my_appointments"][0]
+    case = next(c for c in load_cases() if c["id"] == "hp_my_appointments")
     result = run_case(case, "fake")
     path = write_report([result], "fake", None, tmp_path / "r.md")
     text = Path(path).read_text(encoding="utf-8")

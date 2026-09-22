@@ -39,7 +39,7 @@ def create_app(deps: Deps | None = None) -> FastAPI:
         return {"status": "ok"}
 
     @app.post("/assistant/message", response_model=AssistantResponse)
-    def message(body: MessageRequest, request: Request, patient: PatientContext = Depends(get_patient),
+    def message(body: MessageRequest, request: Request, patient: PatientContext = Depends(get_patient),  # noqa: B008 (FastAPI dependency idiom)
                 x_request_id: str | None = Header(default=None),
                 x_mock_fault: str | None = Header(default=None)) -> AssistantResponse:
         d: Deps = request.app.state.deps

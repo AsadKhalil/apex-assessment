@@ -8,9 +8,9 @@ os.environ.setdefault("APP_FAKE_NOW", "2026-10-05T09:00:00+03:00")
 os.environ.setdefault("LOG_HMAC_KEY", "test-hmac-key")
 os.environ.setdefault("LLM_PROVIDER", "scripted")
 
-from app.config import Settings  # noqa: E402
-from app.retrieval import Retriever  # noqa: E402
-from app.state import Store  # noqa: E402
+from app.config import Settings
+from app.retrieval import Retriever
+from app.state import Store
 
 KB_DIR = Path(__file__).resolve().parents[1] / "kb"
 

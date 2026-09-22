@@ -31,7 +31,7 @@ def test_injected_instruction_cannot_execute_writes(store, settings):
     cid = store.create_conversation("P-1001")
     r = run_turn(deps, patient_id="P-1001", patient_hash="ph", conversation_id=cid,
                  message="how do I cancel an appointment?", request_id="r-inj")
-    developer = [i for i in deps.llm.calls[0]["input_items"] if i.get("role") == "developer"][0]["content"]
+    developer = next(i for i in deps.llm.calls[0]["input_items"] if i.get("role") == "developer")["content"]
     assert "SYSTEM OVERRIDE" in developer  # the poison really reached the model
     statuses = [a.status for a in r.actions]
     assert ActionStatus.executed_verified not in statuses

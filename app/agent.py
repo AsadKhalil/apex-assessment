@@ -11,7 +11,14 @@ from datetime import datetime
 from app.config import Settings
 from app.llm import LLMClient, LLMOutputInvalid, LLMResult, LLMUnavailable, tool_schemas
 from app.policy import ToolCall, ToolOutcome, TurnContext, authorize, execute
-from app.prompts import no_retrieved_note, pending_note, system_instructions, t, verified_success, wrap_retrieved
+from app.prompts import (
+    no_retrieved_note,
+    pending_note,
+    system_instructions,
+    t,
+    verified_success,
+    wrap_retrieved,
+)
 from app.retrieval import RetrievalResult, Retriever
 from app.schemas import (
     ActionRecord,

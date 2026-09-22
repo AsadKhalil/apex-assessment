@@ -7,7 +7,7 @@ import json
 import logging
 import sys
 from contextvars import ContextVar
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 request_id_var: ContextVar[str] = ContextVar("request_id", default="-")
 REDACTED_KEYS = {"message", "content", "name", "display_name", "patient_id", "token", "authorization",
@@ -22,7 +22,7 @@ def patient_hash(key: str, patient_id: str) -> str:
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         payload = {
-            "ts": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
+            "ts": datetime.now(UTC).isoformat(timespec="milliseconds"),
             "level": record.levelname,
             "event": record.getMessage(),
             "request_id": request_id_var.get(),

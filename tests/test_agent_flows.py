@@ -125,7 +125,7 @@ def test_sources_and_no_info_note(store, settings, retriever):
     assert r.sources and r.sources[0].doc_id == "prep-mri"
     deps2, cid2 = make(store, settings, retriever, [final("I do not have that information.")])
     turn(deps2, cid2, "Do you have a gift shop and what are its prices?")
-    developer = [i for i in deps2.llm.calls[0]["input_items"] if i.get("role") == "developer"][0]["content"]
+    developer = next(i for i in deps2.llm.calls[0]["input_items"] if i.get("role") == "developer")["content"]
     assert "not available" in developer
 
 

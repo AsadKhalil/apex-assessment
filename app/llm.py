@@ -82,9 +82,9 @@ def final(message: str, intents=("information",), claimed=(), language="en",
         escalation_recommended=escalation_recommended, pending_declined=pending_declined, language=language))
 
 
-from pydantic import ValidationError  # noqa: E402
+from pydantic import ValidationError
 
-from app.config import Settings  # noqa: E402
+from app.config import Settings
 
 
 class OpenAIResponsesClient:
@@ -101,9 +101,10 @@ class OpenAIResponsesClient:
     def respond(self, instructions, input_items, tools, text_format) -> LLMResult:
         import openai
 
-        kwargs: dict[str, Any] = dict(
-            model=self.settings.openai_model, instructions=instructions, input=input_items, tools=tools,
-            text_format=text_format, store=False, include=["reasoning.encrypted_content"])
+        kwargs: dict[str, Any] = {
+            "model": self.settings.openai_model, "instructions": instructions, "input": input_items,
+            "tools": tools, "text_format": text_format, "store": False,
+            "include": ["reasoning.encrypted_content"]}
         if self.settings.openai_reasoning_effort:
             kwargs["reasoning"] = {"effort": self.settings.openai_reasoning_effort}
         try:

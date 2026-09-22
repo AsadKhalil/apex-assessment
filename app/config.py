@@ -41,7 +41,7 @@ class Settings:
     max_iterations: int = 4
 
     @classmethod
-    def from_env(cls, **overrides) -> "Settings":
+    def from_env(cls, **overrides) -> Settings:
         values = {}
         for f in fields(cls):
             env_name = _ENV_MAP.get(f.name)

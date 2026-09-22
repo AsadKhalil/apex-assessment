@@ -211,11 +211,11 @@ def write_report(results: list[CaseResult], mode: str, model: str | None, path: 
     p50 = int(statistics.median(latencies)) if latencies else 0
     p95 = int(sorted(latencies)[max(0, int(len(latencies) * 0.95) - 1)]) if latencies else 0
     text = "\n".join([
-        f"# Eval report: mode={mode} model={model or '-'} date={date.today().isoformat()}",
+        f"# Eval report: mode={mode} model={model or '-'} date={date.today().isoformat()}",  # noqa: DTZ011
         "",
         f"Cases: {len(results)}. Passed: {passed}. Pass rate: {100 * passed / max(1, len(results)):.0f}%.",
-        f"Turn latency p50: {p50} ms, p95: {p95} ms. Estimated model cost for this run: ${total_cost:.4f} "
-        f"(prices per 1M tokens: in ${price_in}, out ${price_out}; no cached-input discount applied).",
+        (f"Turn latency p50: {p50} ms, p95: {p95} ms. Estimated model cost for this run: ${total_cost:.4f} "
+         f"(prices per 1M tokens: in ${price_in}, out ${price_out}; no cached-input discount applied)."),
         "",
         "## By category", "", "| Category | Passed |", "|---|---|", *cat_rows,
         "", "## Cases", "", *rows,
@@ -247,7 +247,7 @@ def main(argv: list[str] | None = None) -> int:
             for p in t.problems:
                 print(f"   turn {i}: {p}")
     suffix = f"-{model}" if model else ""
-    path = write_report(results, args.mode, model, REPORTS / f"{date.today().isoformat()}-{args.mode}{suffix}.md")
+    path = write_report(results, args.mode, model, REPORTS / f"{date.today().isoformat()}-{args.mode}{suffix}.md")  # noqa: DTZ011
     print(f"report: {path}")
     return 0 if all(r.passed for r in results) else 1
 
