@@ -21,6 +21,11 @@ def build_deps(settings: Settings | None = None) -> Deps:
     store.init_schema()
     store.seed()
     if settings.llm_provider == "openai":
+        if not settings.openai_api_key:
+            raise RuntimeError(
+                "OPENAI_API_KEY is not set. Copy .env.example to .env, add your key, and start with "
+                "`uv run --env-file .env uvicorn app.main:create_app --factory` (or Docker). "
+                "Tests and fake-mode evals never need a key.")
         from app.llm import OpenAIResponsesClient
 
         llm = OpenAIResponsesClient(settings)

@@ -64,6 +64,10 @@ def test_transport_errors_become_unavailable():
     exc2 = openai.APIStatusError("down", response=resp500, body=None)
     with pytest.raises(LLMUnavailable):
         OpenAIResponsesClient(settings(), client=fake_client(exc=exc2)).respond("sys", [], [], AssistantOutput)
+    resp401 = httpx.Response(401, request=httpx.Request("POST", "https://api.openai.com/v1/responses"))
+    exc3 = openai.APIStatusError("bad key", response=resp401, body=None)
+    with pytest.raises(LLMUnavailable):  # provider rejection must not surface as a 500
+        OpenAIResponsesClient(settings(), client=fake_client(exc=exc3)).respond("sys", [], [], AssistantOutput)
 
 
 def test_malformed_arguments_are_not_swallowed():

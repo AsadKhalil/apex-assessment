@@ -112,9 +112,9 @@ class OpenAIResponsesClient:
         except (openai.APIConnectionError, openai.APITimeoutError, openai.RateLimitError) as e:
             raise LLMUnavailable(str(e)) from e
         except openai.APIStatusError as e:
-            if e.status_code >= 500:
-                raise LLMUnavailable(str(e)) from e
-            raise
+            # Provider rejection (bad key, bad request, quota) is a provider failure from the
+            # patient's perspective: map it to MODEL_UNAVAILABLE's safe template, never a 500.
+            raise LLMUnavailable(f"provider status {e.status_code}: {e}") from e
         except (ValidationError, ValueError) as e:  # final text did not match AssistantOutput
             raise LLMOutputInvalid(str(e)) from e
         return to_result(resp)
