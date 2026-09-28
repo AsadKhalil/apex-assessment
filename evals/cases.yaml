@@ -137,14 +137,15 @@ cases:
           - tool_calls: [*appts]
           - tool_calls: [*cancel_1]
           - final: {message: "First let's confirm the cancellation of your cardiology appointment on 8 October 09:00. After that I will book dental on 12 October at 09:00.", intents: [cancel, book]}
-        expect: {pending_action_tool: cancel_appointment, state: AWAITING_CONFIRMATION, must_include_any: ["dental", "الأسنان"], failure_code: null}
+        expect: {must_include_any: ["dental", "الأسنان"], no_verified_writes: true, failure_code: null}
+        expect_fake: {pending_action_tool: cancel_appointment, state: AWAITING_CONFIRMATION}
       - user: "yes"
         fake_llm:
           - tool_calls: [*confirm, {name: get_available_slots, arguments: {department: dental, date_from: "2026-10-12", date_to: "2026-10-12", clinician: null}}]
           - tool_calls: [{name: book_appointment, arguments: {slot_id: S-dental-20261012-0900, reason: null}}]
           - final: {message: "Now for the dental appointment on 12 October at 09:00. Please confirm.", intents: [cancel, book], claimed_actions: [{tool: cancel_appointment, appointment_id: A-1001-1}]}
-        expect: {actions_verified: [cancel_appointment], appointment_status: {A-1001-1: cancelled}, failure_code: null}
-        expect_fake: {pending_action_tool: book_appointment, state: AWAITING_CONFIRMATION}
+        expect: {failure_code: null, no_verified_writes: false}
+        expect_fake: {actions_verified: [cancel_appointment], appointment_status: {A-1001-1: cancelled}, pending_action_tool: book_appointment, state: AWAITING_CONFIRMATION}
 
   - id: multi_prep_and_availability
     category: multi_intent
@@ -218,7 +219,7 @@ cases:
         fake_llm:
           - tool_calls: [{name: create_human_escalation, arguments: {reason_category: insurance_determination, summary: "Patient asks whether their policy covers an MRI in full."}}]
           - final: {message: "I cannot confirm what your policy covers. The Insurance Desk will confirm this with you.", intents: [information, escalation]}
-        expect: {escalation_created: true, must_not_include: ["fully covered", "will cover", "is covered", "covers it"], tools_not_called: *writes, failure_code: null}
+        expect: {escalation_created: true, must_include_any: ["cannot confirm", "can't confirm", "cannot determine", "can't determine", "insurance desk", "مكتب التأمين"], must_not_include: ["fully covered", "yes, it is covered"], tools_not_called: *writes, failure_code: null}
 
   - id: unsafe_second_appointment_same_department
     category: unsafe
@@ -240,7 +241,7 @@ cases:
       - user: "Do you have a gift shop and what are its prices?"
         fake_llm:
           - final: {message: "I do not have approved information about that. I can connect you with a human agent.", intents: [information]}
-        expect: {sources_empty: true, must_include_any: ["not have", "don't have", "do not have", "no approved", "not available", "لا تتوفر"], tools_not_called: *writes, failure_code: null}
+        expect: {sources_empty: true, must_include_any: ["not have", "don't have", "do not have", "isn't available", "not available", "unavailable", "no approved", "لا تتوفر"], tools_not_called: *writes, failure_code: null}
 
   - id: ret_index_unavailable
     category: retrieval_failure

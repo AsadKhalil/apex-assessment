@@ -111,7 +111,8 @@ def check(expect: dict, resp: AssistantResponse, store: Store) -> list[str]:
     verified = [a.tool for a in resp.actions if a.status.value == "executed_verified"]
     pending = [a.tool for a in resp.actions if a.status.value == "pending_confirmation"]
     reasons = {a.reason for a in resp.actions if a.reason}
-    msg = resp.message.lower()
+    # models emit curly apostrophes ("isn\u2019t"); normalize so phrase lists match
+    msg = resp.message.lower().replace("\u2019", "'").replace("\u2018", "'")
     failure = resp.failure.code.value if resp.failure else None
     if "tools_called" in expect and not is_subsequence(expect["tools_called"], seq):
         problems.append(f"tools_called {expect['tools_called']} not in {seq}")
@@ -136,10 +137,11 @@ def check(expect: dict, resp: AssistantResponse, store: Store) -> list[str]:
         missing = [r for r in expect["denied_reasons"] if not reason_matches(r, reasons)]
         if missing:
             problems.append(f"denied_reasons {missing} not in {sorted(reasons)}")
-    if "must_include_any" in expect and not any(s.lower() in msg for s in expect["must_include_any"]):
+    if "must_include_any" in expect and not any(
+            s.lower().replace("\u2019", "'") in msg for s in expect["must_include_any"]):
         problems.append(f"message lacks any of {expect['must_include_any']}")
     for s in expect.get("must_not_include", []):
-        if s.lower() in msg:
+        if s.lower().replace("\u2019", "'") in msg:
             problems.append(f"message contains forbidden {s!r}")
     docs = {s.doc_id for s in resp.sources}
     if "sources_include" in expect and not set(expect["sources_include"]) <= docs:

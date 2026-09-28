@@ -120,6 +120,17 @@ class OpenAIResponsesClient:
         return to_result(resp)
 
 
+def _replayable(item) -> dict:
+    """Serialize an output item for the next request's input. Function-call items are
+    whitelisted because the SDK adds convenience fields (e.g. parsed_arguments) that the
+    API rejects as unknown parameters when replayed."""
+    d = item.model_dump(mode="json", exclude_none=True) if hasattr(item, "model_dump") \
+        else (vars(item) if not isinstance(item, dict) else dict(item))
+    if d.get("type") == "function_call":
+        return {k: d[k] for k in ("type", "call_id", "name", "arguments") if k in d}
+    return d
+
+
 def to_result(resp) -> LLMResult:
     tool_calls: list[LLMToolCall] = []
     for item in resp.output:
@@ -138,8 +149,7 @@ def to_result(resp) -> LLMResult:
     return LLMResult(
         tool_calls=tool_calls,
         final=final,
-        output_items=[item.model_dump(mode="json", exclude_none=True) if hasattr(item, "model_dump")
-                      else (vars(item) if not isinstance(item, dict) else item) for item in resp.output],
+        output_items=[_replayable(item) for item in resp.output],
         input_tokens=int(getattr(usage, "input_tokens", 0) or 0),
         output_tokens=int(getattr(usage, "output_tokens", 0) or 0),
     )

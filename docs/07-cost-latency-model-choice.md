@@ -17,6 +17,8 @@ Source: OpenAI API pricing (developers.openai.com/api/docs/pricing), read 2026-0
 
 Assumptions until the measured report replaces them: 1.6 model calls per turn; per call ≈ 3,500 input tokens (2,000 static instructions + tool schemas — cacheable; 600 retrieved content; 600 history; 300 tool results) and ≈ 250 output tokens. Per interaction: 5,600 input (3,200 cacheable), 400 output. The openai-mode eval report (`evals/reports/`) prints measured tokens per turn; docs and decisions use those when present.
 
+**Measured (final real-model eval, gpt-5.6-luna, 2026-09-28, `evals/reports/2026-09-28-openai-gpt-5.6-luna.md`):** average 2,769 input / 140 output tokens per turn (45 turns, 28 cases), p50 turn latency 3.9 s, p95 6.9 s, ~$0.0007 per turn. Measured turns are lighter than the assumption (single-model-call turns dominate; writes need two turns), so the assumption-based table below is the conservative planning number. Both are shown; budget with the table, monitor with the report.
+
 ## 3. Cost table
 
 Arithmetic shown once: luna, no cache = 5,600 × 0.20/1e6 + 400 × 1.20/1e6 = $0.00112 + $0.00048 = $0.00160.

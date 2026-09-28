@@ -38,7 +38,7 @@ Docker:
 docker compose up --build
 ```
 
-Mock patients: `token-p1001` (patient P-1001, appointments A-1001-1 cardiology and A-1001-2 dermatology) and `token-p1002`. Set `APP_FAKE_NOW=2026-10-05T09:00:00+03:00` for the deterministic demo calendar used by the tests and evals. Note the seeded policy: each patient may hold one active appointment per department (enforced in `app/tools.py`), so the booking demo uses dental — P-1001 already has cardiology.
+Mock patients: `token-p1001` (patient P-1001, appointments A-1001-1 cardiology and A-1001-2 dermatology) and `token-p1002`. Set `APP_FAKE_NOW=2026-10-05T09:00:00+03:00` for the deterministic demo calendar used by the tests and evals. Seed data is generated on first run for the 14 days after the clock at that moment: if you change `APP_FAKE_NOW` (or run on the real clock after previously seeding), delete `data/assistant.db*` so the demo calendar is re-seeded. Note the seeded policy: each patient may hold one active appointment per department (enforced in `app/tools.py`), so the booking demo uses dental — P-1001 already has cardiology.
 
 ## Try a two-turn booking
 

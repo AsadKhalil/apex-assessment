@@ -29,7 +29,8 @@ def settings():
 
 
 def test_request_is_stateless_and_strict():
-    call = SimpleNamespace(type="function_call", call_id="call_abc", name="get_patient_appointments", arguments="{}")
+    call = SimpleNamespace(type="function_call", call_id="call_abc", name="get_patient_appointments",
+                           arguments="{}", parsed_arguments={}, id="fc_1", status="completed")
     resp = SimpleNamespace(output=[call], output_parsed=None, usage=SimpleNamespace(input_tokens=120, output_tokens=8))
     client = fake_client(resp)
     r = OpenAIResponsesClient(settings(), client=client).respond("sys", [{"role": "user", "content": "hi"}], tool_schemas(), AssistantOutput)
@@ -40,6 +41,8 @@ def test_request_is_stateless_and_strict():
     assert r.tool_calls[0].call_id == "call_abc" and r.tool_calls[0].arguments == {}
     assert r.input_tokens == 120 and r.output_tokens == 8 and r.final is None
     assert r.output_items[0]["type"] == "function_call"
+    # replayable function-call items carry only the wire fields; SDK extras are stripped
+    assert set(r.output_items[0]) == {"type", "call_id", "name", "arguments"}
 
 
 def test_final_answer_is_parsed():
