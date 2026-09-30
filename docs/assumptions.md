@@ -12,4 +12,4 @@
 10. Model prices in `docs/07` were read from OpenAI's pricing page on 2026-09-22 and must be re-verified before any budget decision.
 11. Verification reads through the same mock adapter it verifies; production requires an independent read path (`docs/08`).
 12. Pending actions expire after 10 minutes and are not swept by a background job; expiry is checked on use.
-13. No rate limiting, streaming, UI, request-level idempotency for retried POSTs, or multi-tenancy in this submission.
+13. No rate limiting, streaming, request-level idempotency for retried POSTs, or multi-tenancy in this submission; the only UI is a single-file demo page for live demos.

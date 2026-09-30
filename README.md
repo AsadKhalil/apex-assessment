@@ -42,6 +42,8 @@ Mock patients: `token-p1001` (patient P-1001, appointments A-1001-1 cardiology a
 
 ## Try a two-turn booking
 
+Prefer a visual demo? Open **http://localhost:8000/** — a minimal single-file chat page (`app/static/index.html`, no build step, no external resources) where you pick a mock patient, optionally inject a fault, and watch state, actions, and verification on every reply. It is a demo aid for the assessment, not a production UI.
+
 ```bash
 curl -s -X POST http://localhost:8000/assistant/message \
   -H "Authorization: Bearer token-p1001" -H "Content-Type: application/json" \

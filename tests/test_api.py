@@ -24,6 +24,11 @@ def test_healthz(api):
     assert api[0].get("/healthz").json() == {"status": "ok"}
 
 
+def test_demo_page_is_served(api):
+    r = api[0].get("/")
+    assert r.status_code == 200 and "Patient" in r.text and "/assistant/message" in r.text
+
+
 def test_401_without_or_with_bad_token(api):
     client, _ = api
     assert post(client, {"message": "hi"}, token=None).status_code == 401

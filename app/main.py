@@ -1,9 +1,11 @@
-"""FastAPI service: POST /assistant/message and GET /healthz. Run with: uvicorn app.main:create_app --factory"""
+"""FastAPI service: POST /assistant/message, GET /healthz, and a demo page at GET /."""
 from __future__ import annotations
 
 import uuid
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi.responses import FileResponse
 
 from app.agent import Deps, run_turn
 from app.auth import PatientContext, get_patient
@@ -42,6 +44,10 @@ def create_app(deps: Deps | None = None) -> FastAPI:
     @app.get("/healthz")
     def healthz() -> dict:
         return {"status": "ok"}
+
+    @app.get("/", include_in_schema=False)
+    def index() -> FileResponse:
+        return FileResponse(Path(__file__).parent / "static" / "index.html")
 
     @app.post("/assistant/message", response_model=AssistantResponse)
     def message(body: MessageRequest, request: Request, patient: PatientContext = Depends(get_patient),  # noqa: B008 (FastAPI dependency idiom)

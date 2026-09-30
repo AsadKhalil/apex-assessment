@@ -54,7 +54,7 @@ TDD per task against the reviewed implementation plan (in `docs/superpowers/plan
 - **Real identity provider** — mock table stands in; OIDC integration is the first pre-production action (README).
 - **Postgres / Redis** — SQLite is deliberate for the pilot (ADR-004); Postgres arrives with the production topology.
 - **Rate-limiting middleware, gateway** — belongs at the ingress in production, not inside the service.
-- **Streaming, UI** — not needed to prove the safety architecture; latency is bounded and measured.
+- **Streaming and a production UI** — a minimal single-file demo page (`app/static/index.html`, served at `/`) exists for live demos; a real patient-facing UI (auth flows, i18n, accessibility, session handling, streaming) remains out of scope. Latency is bounded and measured.
 - **Full Arabic KB and native validation** — the pipeline is proven with three bilingual docs and two Arabic eval cases; completion is a pre-production action.
 - **PII-detection models, async queues, metrics stack, multi-tenancy, CI pipeline** — documented in `docs/06`; a CI pipeline running `ruff + pytest + fake evals` is a one-file addition and the first thing I would add after submission.
 
